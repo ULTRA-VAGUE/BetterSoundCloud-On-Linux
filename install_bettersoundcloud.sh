@@ -34,33 +34,52 @@ fi
 echo -e "${CYAN}Detected package manager: $PM${RESET}"
 
 # --- Install prerequisites ---
-echo -e "${CYAN}Installing dependencies (git, nodejs, npm, curl)...${RESET}"
+echo -e "${CYAN}Checking for dependencies (git, curl, nodejs, npm)...${RESET}"
+
+# Install git + curl (these are lightweight and harmless to reinstall)
 case "$PM" in
     apt)
-        $INSTALL_CMD git curl nodejs npm || {
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt install -y nodejs git npm curl
-        }
+        sudo apt update && sudo apt install -y git curl
         ;;
     pacman)
-        $INSTALL_CMD git nodejs npm curl
+        sudo pacman -Sy --noconfirm git curl
         ;;
     dnf)
-        $INSTALL_CMD git nodejs npm curl
+        sudo dnf install -y git curl
         ;;
     zypper)
-        $INSTALL_CMD git nodejs npm curl
+        sudo zypper install -y git curl
         ;;
 esac
-echo -e "${GREEN}✔ Dependencies installed.${RESET}\n"
+
+# --- Check Node.js and npm ---
+if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
+    echo -e "${GREEN}✔ Node.js and npm already installed.${RESET}"
+else
+    echo -e "${CYAN}⚙️ Node.js or npm not found — installing via NVM (recommended)...${RESET}"
+    
+    # Install NVM if missing
+    if [ ! -d "$HOME/.nvm" ]; then
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    fi
+    
+    # Load NVM into this session
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    
+    # Install latest LTS Node.js
+    nvm install --lts
+    
+    echo -e "${GREEN}✔ Node.js and npm installed via NVM.${RESET}"
+fi
 
 # --- Clone or update repo ---
 if [ -d "$INSTALL_DIR/.git" ]; then
     echo -e "${CYAN}Updating existing repository...${RESET}"
     cd "$INSTALL_DIR"
+    git fetch origin main
     git reset --hard origin/main
     git clean -fd
-    git pull origin main
 else
     echo -e "${CYAN}Cloning repository into $INSTALL_DIR...${RESET}"
     git clone "$APP_REPO_URL" "$INSTALL_DIR"
