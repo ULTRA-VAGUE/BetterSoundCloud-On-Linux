@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# --- Installation directory ---
-INSTALL_DIR="$(dirname "${BASH_SOURCE[0]}")"
+# --- Installation directory (script location) ---
+INSTALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # --- Node/NVM setup ---
 export NVM_DIR="$HOME/.nvm"
