@@ -132,8 +132,8 @@ mkdir -p "$(dirname "$DESKTOP_FILE")"
 cat > "$DESKTOP_FILE" <<EOF
 [Desktop Entry]
 Name=$APP_NAME
-Exec=bash -c 'export NVM_DIR="\$HOME/.nvm"; [ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"; exec "\$HOME/BetterSoundCloud-Linux/start.sh"'
-Icon=\$HOME/BetterSoundCloud-Linux/app/lib/assets/icon.ico
+Exec=$START_SCRIPT
+Icon=$INSTALL_DIR/app/lib/assets/icon.ico
 Type=Application
 Terminal=false
 Categories=Audio;Music;
@@ -141,7 +141,6 @@ Comment=Enhanced SoundCloud desktop client
 EOF
 chmod +x "$DESKTOP_FILE"
 echo -e "${GREEN}✔ .desktop entry created.${RESET}"
-
 
 # --- Done ---
 echo -e "\n${GREEN}✔ Installation complete!${RESET}"
