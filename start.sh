@@ -10,7 +10,7 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
     # NVM laden
     \. "$NVM_DIR/nvm.sh"
 else
-    echo "⚠️ NVM nicht gefunden. Stelle sicher, dass Node.js installiert ist."
+    echo "⚠️ NVM not found."
     exit 1
 fi
 
