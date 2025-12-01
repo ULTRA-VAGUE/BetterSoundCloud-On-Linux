@@ -508,3 +508,66 @@ function webviewscrldown() {
   console.log("scrolling");
   webview.executeJavaScript("window.scrollBy(0, 500)");
 }
+
+// Last.fm Settings Functions
+function loadLastFmSettings() {
+  // Load saved credentials into the input fields
+  webview.executeJavaScript(`localStorage.getItem('lastfm_api_key') || ''`).then(val => {
+    const input = document.getElementById('lastfm_api_key');
+    if (input && val) input.value = val;
+  }).catch(() => {});
+  
+  webview.executeJavaScript(`localStorage.getItem('lastfm_shared_secret') || ''`).then(val => {
+    const input = document.getElementById('lastfm_shared_secret');
+    if (input && val) input.value = val;
+  }).catch(() => {});
+  
+  updateLastFmStatus();
+}
+
+function updateLastFmStatus() {
+  webview.executeJavaScript(`localStorage.getItem('lastfm_username') || ''`).then(username => {
+    const statusEl = document.getElementById('lastfm_status');
+    if (statusEl) {
+      if (username) {
+        statusEl.textContent = 'Connected as: ' + username;
+        statusEl.style.color = '#4CAF50';
+      } else {
+        statusEl.textContent = 'Not connected - Enter your credentials and save';
+        statusEl.style.color = '#ff9800';
+      }
+    }
+  }).catch(() => {});
+}
+
+function saveLastFmCredentials() {
+  const apiKey = document.getElementById('lastfm_api_key').value.trim();
+  const sharedSecret = document.getElementById('lastfm_shared_secret').value.trim();
+  
+  if (!apiKey || !sharedSecret) {
+    alert('Please enter both API Key and Shared Secret');
+    return;
+  }
+  
+  // Save to webview localStorage and clear existing auth
+  webview.executeJavaScript(`
+    localStorage.setItem('lastfm_api_key', '${apiKey}');
+    localStorage.setItem('lastfm_shared_secret', '${sharedSecret}');
+    localStorage.removeItem('lastfm_session_key');
+    localStorage.removeItem('lastfm_username');
+    localStorage.removeItem('lastfm_pending_token');
+    window.__BSC_LASTFM_LOADED__ = false;
+    'saved'
+  `).then(() => {
+    alert('Last.fm credentials saved! Reloading SoundCloud to re-authenticate...');
+    webview.reload();
+    setTimeout(updateLastFmStatus, 5000);
+  }).catch(err => {
+    alert('Error saving credentials: ' + err.message);
+  });
+}
+
+// Load Last.fm settings when webview is ready
+webview.addEventListener('did-finish-load', () => {
+  setTimeout(loadLastFmSettings, 2000);
+});

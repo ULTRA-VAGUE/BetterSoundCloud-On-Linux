@@ -33,6 +33,16 @@ function loadstop() {
     // LOAD INFO TICKER
     addscript(path.join("plugins", "infoticker.js"));
 
+    // LOAD LAST.FM SCROBBLER (defer slightly to avoid transient injection errors)
+    setTimeout(() => {
+      try {
+        addscript(path.join("plugins", "lastfm.js"));
+        console.log("BSCReceive|LastFM|injected plugin script");
+      } catch (e) {
+        console.log("BSCReceive|LastFM|inject failed:" + e.message);
+      }
+    }, 1200);
+
     // LOAD CUSTOMBG
     if (settings.custombg) {
       addscript(path.join("plugins", "custombg.js"));

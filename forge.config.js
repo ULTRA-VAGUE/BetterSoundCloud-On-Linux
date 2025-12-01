@@ -14,41 +14,15 @@ module.exports = {
   rebuildConfig: {},
   makers: [
     {
-      name: "@electron-forge/maker-appx",
-      config: {
-        publisher: "CN=developmentca",
-        icon: "app/lib/assets/icon.ico",
-        // devCert: 'C:\\devcert.pfx',
-        // certPass: 'abcd'
-      },
-    },
-    {
-      name: "@electron-forge/maker-wix",
-      config: {
-        language: 1033,
-        icon: "app/lib/assets/icon.ico",
-        // manufacturer: 'My Awesome Company'
-      },
-    },
-    {
       name: "@electron-forge/maker-squirrel",
       config: {
+        name: "BetterSoundCloud",
         icon: "app/lib/assets/icon.ico",
-        // certificateFile: './cert.pfx',
-        // certificatePassword: process.env.CERTIFICATE_PASSWORD
       },
     },
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["darwin"],
-    },
-    {
-      name: "@electron-forge/maker-deb",
-      config: {},
-    },
-    {
-      name: "@electron-forge/maker-rpm",
-      config: {},
+      platforms: ["win32", "darwin"],
     },
   ],
   plugins: [
