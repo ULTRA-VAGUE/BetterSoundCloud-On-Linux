@@ -2,8 +2,8 @@
 set -e
 
 APP_NAME="BetterSoundCloud"
-INSTALL_DIR="$HOME/BetterSoundCloud-Linux"
-APP_REPO_URL="https://github.com/ULTRA-VAGUE/BetterSoundCloud-On-Linux"
+INSTALL_DIR="$HOME/BetterSoundCloud"
+APP_REPO_URL="https://github.com/AlirezaKJ/BetterSoundCloud"
 START_SCRIPT="$INSTALL_DIR/start.sh"
 DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
 
