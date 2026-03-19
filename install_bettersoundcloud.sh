@@ -107,27 +107,36 @@ cat > "$START_SCRIPT" <<EOF
 #!/usr/bin/env bash
 set -e
 
-# Load NVM
-export NVM_DIR="\$HOME/.nvm"
-[ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
-cd "$INSTALL_DIR"
+REPO_URL="https://github.com/ULTRA-VAGUE/BetterSoundCloud-On-Linux"
 
 echo "🔄 Checking for updates..."
-# Update only if a new version exists
-if git fetch origin main --quiet 2>/dev/null; then
-    LOCAL=\$(git rev-parse @)
-    REMOTE=\$(git rev-parse @{u})
-    if [ "\$LOCAL" != "\$REMOTE" ]; then
-        echo "⬆ Updating app..."
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+    git remote set-url origin "$REPO_URL" 2>/dev/null || git remote add origin "$REPO_URL"
+    git fetch origin main
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+    if [ -n "$REMOTE" ] && [ "$LOCAL" != "$REMOTE" ]; then
+        echo "⬆ Updating BetterSoundCloud..."
         git reset --hard origin/main
         git clean -fd
         git pull origin main
-        npm install --silent --no-audit --no-fund --loglevel=error
+    else
+        echo "✅ Already up to date."
     fi
+else
+    echo "⚠️ Not a git repository — skipping update."
 fi
 
 echo "▶ Starting BetterSoundCloud..."
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" 
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" 
+
+cd "$SCRIPT_DIR"
 npm start
 EOF
 
