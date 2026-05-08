@@ -5,6 +5,7 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: "app/lib/assets/icon",
+    electronDist: require('path').join(__dirname, 'node_modules', 'electron', 'dist'),
   },
   // files: [
   //   'dist/**/*',
@@ -15,9 +16,19 @@ module.exports = {
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
+      platforms: ["win32"],
       config: {
         name: "BetterSoundCloud",
         icon: "app/lib/assets/icon.ico",
+      },
+    },
+    {
+      name: "@electron-forge/maker-wix",
+      platforms: ["win32"],
+      config: {
+        language: 1033,
+        icon: "app/lib/assets/icon.ico",
+        manufacturer: 'AKJStudio'
       },
     },
     {
